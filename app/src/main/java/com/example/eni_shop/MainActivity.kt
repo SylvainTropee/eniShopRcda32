@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.eni_shop.bo.Article
 import com.example.eni_shop.repository.ArticleRepository
+import com.example.eni_shop.ui.screen.ArticleDetailScreen
 import com.example.eni_shop.ui.theme.EnishopTheme
 import java.util.Date
 
@@ -24,47 +25,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val article = ArticleRepository.getArticle(2)
-        val id = ArticleRepository.addArticle(
-            Article(
-                id = 0,
-                name = "Ecran3",
-                description = "Description c'est un écran2",
-                price = 52.56,
-                category = "Multimédia2",
-                urlImage = "default2",
-                date = Date()
-            )
-        )
-        Log.i(TAG, "Id renvoyé = $id")
-        Log.i(TAG, ArticleRepository.getArticle(3).toString())
-
-
         setContent {
             EnishopTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                ArticleDetailScreen()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EnishopTheme {
-        Greeting("Android")
-    }
-}
