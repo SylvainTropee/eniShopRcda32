@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.eni_shop.bo.Article
 import com.example.eni_shop.repository.ArticleRepository
 import com.example.eni_shop.ui.screen.ArticleDetailScreen
+import com.example.eni_shop.ui.screen.ArticleFormScreen
 import com.example.eni_shop.ui.theme.EnishopTheme
 import java.util.Date
 
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             EnishopTheme {
-                ArticleDetailScreen()
+                ArticleFormScreen()
             }
         }
     }
