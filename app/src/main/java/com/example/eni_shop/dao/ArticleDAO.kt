@@ -8,4 +8,6 @@ interface ArticleDAO {
 
     fun insert(article: Article) : Long
 
+    fun findAll() : List<Article>
+
 }

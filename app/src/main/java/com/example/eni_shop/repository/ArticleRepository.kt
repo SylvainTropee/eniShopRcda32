@@ -5,7 +5,7 @@ import com.example.eni_shop.dao.ArticleDAO
 import com.example.eni_shop.dao.DaoFactory
 import com.example.eni_shop.dao.DaoType
 
-object ArticleRepository {
+class ArticleRepository {
 
     private val articleDAO : ArticleDAO = DaoFactory.createArticleDao(DaoType.MEMORY);
 
@@ -15,6 +15,10 @@ object ArticleRepository {
 
     fun addArticle(article : Article) : Long{
         return articleDAO.insert(article)
+    }
+
+    fun getAllArticles() : List<Article>{
+        return articleDAO.findAll()
     }
 
 }
