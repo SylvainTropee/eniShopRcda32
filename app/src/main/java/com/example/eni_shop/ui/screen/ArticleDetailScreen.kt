@@ -31,7 +31,7 @@ fun ArticleDetailScreen(modifier: Modifier = Modifier) {
 
     Scaffold(topBar = { EniShopTopBar() }) {
         Column(modifier = Modifier.padding(it)) {
-            ArticleDetail(ArticleRepository.getArticle(2)!!)
+           // ArticleDetail(ArticleRepository.getArticle(2)!!)
         }
     }
 }
@@ -88,5 +88,5 @@ fun ArticleDetail(article: Article, modifier: Modifier = Modifier) {
 @Preview
 fun Preview() {
 
-    ArticleDetail(ArticleRepository.getArticle(1)!!)
+    ArticleDetail(ArticleRepository().getArticle(1)!!)
 }
