@@ -1,7 +1,9 @@
 package com.example.eni_shop.ui.screen
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,14 +14,20 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -33,21 +41,43 @@ import coil.compose.AsyncImage
 import com.example.eni_shop.bo.Article
 import com.example.eni_shop.ui.common.EniShopTopBar
 import com.example.eni_shop.vm.ArticleListViewModel
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import java.util.Date
 
 @Composable
 fun ArticleListScreen(
-    articleListViewModel: ArticleListViewModel = viewModel(factory = ArticleListViewModel.Factory)) {
+    articleListViewModel: ArticleListViewModel = viewModel(factory = ArticleListViewModel.Factory)
+) {
 
     val articles by articleListViewModel.articles.collectAsState()
     val categories by articleListViewModel.categories.collectAsState()
 
+    var category by remember {
+        mutableStateOf("")
+    }
+
+    val filteredArticles = if (category != "") {
+        articles.filter {
+            it.category == category
+        }
+    } else {
+        articles
+    }
+
     Scaffold(
         topBar = { EniShopTopBar() }
     ) {
-        Column(modifier = Modifier.padding(it)) {
-            CategoryFilterChip(categories = categories)
-            ArticleList(articles = articles)
+        Column(modifier = Modifier
+            .padding(it)
+            .padding(horizontal = 8.dp)) {
+            CategoryFilterChip(
+                categories = categories,
+                selectedCategory = category,
+                onCategoryChange = { selectedCategory ->
+                    category = selectedCategory
+                }
+            )
+            ArticleList(articles = filteredArticles)
         }
     }
 
@@ -56,13 +86,13 @@ fun ArticleListScreen(
 
 @Composable
 fun ArticleList(
-    articles : List<Article>
+    articles: List<Article>
 ) {
 
-
-
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2)
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(articles) { article ->
             ArticleItem(article = article)
@@ -83,26 +113,28 @@ fun ArticleItem(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(vertical = 4.dp)
         ) {
             AsyncImage(
                 model = article.urlImage,
                 contentDescription = article.name,
                 modifier = Modifier
                     .size(80.dp)
-                    .padding(8.dp)
                     .border(1.dp, MaterialTheme.colorScheme.inverseSurface, CircleShape)
+                    .padding(8.dp)
             )
             Text(
                 text = article.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
+                minLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Justify,
                 modifier = Modifier.padding(8.dp)
             )
-            Text(text = "${article.price} €")
+            Text(text = "${String.format("%.2f",article.price)} €")
 
         }
 
@@ -112,17 +144,29 @@ fun ArticleItem(
 
 @Composable
 fun CategoryFilterChip(
-   categories : List<String>
+    categories: List<String>,
+    selectedCategory: String,
+    onCategoryChange: (String) -> Unit
 ) {
 
-
-
-    LazyRow() {
-        items(categories) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        items(categories) { category ->
             FilterChip(
-                selected = false,
-                onClick = {},
-                label = { Text(text = it) }
+                selected = selectedCategory == category,
+                onClick = {
+                    if (selectedCategory != category) {
+                        onCategoryChange(category)
+                    } else {
+                        onCategoryChange("")
+                    }
+
+                },
+                label = { Text(text = category) },
+                leadingIcon = if (selectedCategory == category) {
+                    { Icon(imageVector = Icons.Default.Done, contentDescription = null) }
+                } else {
+                    null
+                }
             )
         }
     }
