@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.eni_shop.ui.screen.ArticleListScreen
+import com.example.eni_shop.ui.screen.ArticleDetailScreen
 import com.example.eni_shop.ui.theme.EnishopTheme
 
 private const val TAG = "MainActivity"
@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             EnishopTheme {
-                ArticleListScreen()
+                ArticleDetailScreen(articleId = 2)
             }
         }
     }

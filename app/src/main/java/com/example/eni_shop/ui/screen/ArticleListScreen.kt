@@ -1,6 +1,5 @@
 package com.example.eni_shop.ui.screen
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +40,6 @@ import coil.compose.AsyncImage
 import com.example.eni_shop.bo.Article
 import com.example.eni_shop.ui.common.EniShopTopBar
 import com.example.eni_shop.vm.ArticleListViewModel
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import java.util.Date
 
 @Composable
@@ -67,9 +65,11 @@ fun ArticleListScreen(
     Scaffold(
         topBar = { EniShopTopBar() }
     ) {
-        Column(modifier = Modifier
-            .padding(it)
-            .padding(horizontal = 8.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .padding(horizontal = 8.dp)
+        ) {
             CategoryFilterChip(
                 categories = categories,
                 selectedCategory = category,
@@ -134,7 +134,7 @@ fun ArticleItem(
                 textAlign = TextAlign.Justify,
                 modifier = Modifier.padding(8.dp)
             )
-            Text(text = "${String.format("%.2f",article.price)} €")
+            Text(text = "${String.format("%.2f", article.price)} €")
 
         }
 
