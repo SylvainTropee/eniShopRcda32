@@ -29,24 +29,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.eni_shop.ui.common.EniShopScaffold
 import com.example.eni_shop.ui.common.EniShopTextField
 import com.example.eni_shop.ui.common.EniShopTopBar
 
 @Composable
-fun ArticleFormScreen() {
+fun ArticleFormScreen(
+    navigationIcon : @Composable () -> Unit
+) {
 
     val context = LocalContext.current
 
     var title by rememberSaveable {
         mutableStateOf("")
     }
-    Scaffold(
-        topBar = { EniShopTopBar() }
-    ) {
+    EniShopScaffold(navigationIcon = navigationIcon) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally ,
             modifier = Modifier
-                .padding(it)
                 .verticalScroll(
                     rememberScrollState()
                 )
@@ -161,6 +161,6 @@ fun DropDownMenuCategories() {
 @Composable
 @Preview
 fun FormPreview() {
-    ArticleFormScreen()
+    //ArticleFormScreen()
 }
 

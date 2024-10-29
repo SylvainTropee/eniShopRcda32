@@ -1,6 +1,5 @@
 package com.example.eni_shop.ui.screen
 
-import android.app.SearchManager
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.eni_shop.bo.Article
 import com.example.eni_shop.repository.ArticleRepository
-import com.example.eni_shop.ui.common.EniShopTopBar
+import com.example.eni_shop.ui.common.EniShopScaffold
 import com.example.eni_shop.utils.toFrenchDate
 import com.example.eni_shop.vm.ArticleDetailViewModel
 
@@ -41,6 +39,7 @@ import com.example.eni_shop.vm.ArticleDetailViewModel
 fun ArticleDetailScreen(
     modifier: Modifier = Modifier,
     articleId: Long,
+    navigationIcon: @Composable () -> Unit,
     articleDetailViewModel: ArticleDetailViewModel = viewModel(factory = ArticleDetailViewModel.Factory)
 ) {
     val article by articleDetailViewModel.article.collectAsState()
@@ -49,9 +48,8 @@ fun ArticleDetailScreen(
         articleDetailViewModel.getArticleById(articleId)
     }
 
-
-    Scaffold(topBar = { EniShopTopBar() }) {
-        Column(modifier = Modifier.padding(it)) {
+    EniShopScaffold(navigationIcon = navigationIcon) {
+        Column() {
             article?.let {
                 ArticleDetail(article = it)
             }
@@ -71,7 +69,8 @@ fun ArticleDetail(article: Article, modifier: Modifier = Modifier) {
             fontSize = 30.sp,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
-                .padding(16.dp).testTag("ArticleName")
+                .padding(16.dp)
+                .testTag("ArticleName")
                 .clickable {
 //                    Intent(Intent.ACTION_WEB_SEARCH).also {
 //                        it.putExtra(SearchManager.QUERY, article.name)
