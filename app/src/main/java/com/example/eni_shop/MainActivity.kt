@@ -5,10 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.eni_shop.datastore.DataStoreManager
 import com.example.eni_shop.nav.ArticleDetailDestination
 import com.example.eni_shop.nav.ArticleFormDestination
 import com.example.eni_shop.nav.ArticleListDestination
@@ -26,7 +33,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            EnishopTheme {
+
+            var isDarkModeActivated by rememberSaveable {
+                mutableStateOf(false)
+            }
+
+            LaunchedEffect(Unit) {
+                DataStoreManager.isDarkModeActivated(this@MainActivity).collect {
+                    isDarkModeActivated = it
+                }
+            }
+
+            EnishopTheme(darkTheme = isDarkModeActivated) {
                 EniShopApp()
             }
         }
