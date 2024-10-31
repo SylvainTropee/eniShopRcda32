@@ -5,14 +5,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import coil.compose.rememberAsyncImagePainter
 import com.example.eni_shop.bo.Article
 import com.example.eni_shop.dao.DaoFactory
 import com.example.eni_shop.dao.DaoType
 import com.example.eni_shop.db.EniShopDatabase
 import com.example.eni_shop.repository.ArticleRepository
+import com.example.eni_shop.services.ArticleService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ArticleListViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
@@ -24,9 +29,24 @@ class ArticleListViewModel(private val articleRepository: ArticleRepository) : V
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     val articles: StateFlow<List<Article>> = _articles
 
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
     init {
-        getArticles()
-        _categories.value = listOf("electronics", "jewelery", "men's clothing", "women's clothing");
+        viewModelScope.launch(Dispatchers.IO) {
+            val cat = async { _categories.value = articleRepository.getAllCategories() }
+            val art = async { _articles.value = articleRepository.getAllArticles() }
+            awaitAll(cat, art)
+            _isLoading.value = false
+        }
+
+    }
+
+    fun getCategories() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _categories.value = articleRepository.getAllCategories()
+        }
     }
 
     fun getArticles() {
@@ -55,7 +75,7 @@ class ArticleListViewModel(private val articleRepository: ArticleRepository) : V
                 return ArticleListViewModel(
                     ArticleRepository(
                         EniShopDatabase.getInstance(application.applicationContext).getArticleDAO(),
-                        DaoFactory.createArticleDao(DaoType.MEMORY)
+                        ArticleService.ShopApi.retrofitService
                     )
                 ) as T
             }

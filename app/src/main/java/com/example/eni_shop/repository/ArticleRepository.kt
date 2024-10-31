@@ -4,39 +4,39 @@ import com.example.eni_shop.bo.Article
 import com.example.eni_shop.dao.ArticleDAO
 import com.example.eni_shop.dao.DaoFactory
 import com.example.eni_shop.dao.DaoType
+import com.example.eni_shop.services.ArticleService
 
 class ArticleRepository(
     private val articleDaoRoomImpl: ArticleDAO,
-    private val articleDAOMemoryImpl: ArticleDAO
+    private val articleService: ArticleService
 ) {
-
-    //méthode MEMORY
-    fun getArticle(id: Long, type: DaoType = DaoType.MEMORY): Article? {
+    suspend fun getArticle(id: Long, type: DaoType = DaoType.NETWORK): Article? {
         return when (type) {
-            DaoType.MEMORY -> articleDAOMemoryImpl.findById(id)
+            DaoType.NETWORK -> articleService.getArticleById(id)
             else -> articleDaoRoomImpl.findById(id)
         }
     }
 
-    fun getAllArticles(type: DaoType = DaoType.MEMORY): List<Article> {
+    suspend fun getAllArticles(type: DaoType = DaoType.NETWORK): List<Article> {
         return when (type) {
-            DaoType.MEMORY -> articleDAOMemoryImpl.findAll()
+            DaoType.NETWORK -> articleService.getAllArticles()
             else -> articleDaoRoomImpl.findAll()
         }
     }
 
-    fun addArticle(article: Article, type: DaoType = DaoType.MEMORY): Long {
+    suspend fun addArticle(article: Article, type: DaoType = DaoType.NETWORK): Any {
         return when (type) {
-            DaoType.MEMORY -> articleDAOMemoryImpl.insert(article)
+            DaoType.NETWORK -> articleService.addArticle(article)
             else -> articleDaoRoomImpl.insert(article)
         }
     }
 
-    fun deleteArticle(article: Article, type: DaoType = DaoType.MEMORY) {
-        when (type) {
-            DaoType.MEMORY -> articleDAOMemoryImpl.delete(article)
-            else -> articleDaoRoomImpl.delete(article)
-        }
+    suspend fun getAllCategories(): List<String> {
+        return articleService.getAllCategories()
+    }
+
+    fun deleteArticle(article: Article, type: DaoType = DaoType.NETWORK) {
+        articleDaoRoomImpl.delete(article)
     }
 
 //    //méthode ROOM

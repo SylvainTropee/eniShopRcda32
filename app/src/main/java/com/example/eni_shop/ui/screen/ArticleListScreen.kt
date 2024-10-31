@@ -50,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.eni_shop.bo.Article
 import com.example.eni_shop.ui.common.EniShopScaffold
+import com.example.eni_shop.ui.common.LoadingScreen
 import com.example.eni_shop.vm.ArticleListViewModel
 
 @Composable
@@ -61,51 +62,57 @@ fun ArticleListScreen(
 
     val articles by articleListViewModel.articles.collectAsState()
     val categories by articleListViewModel.categories.collectAsState()
+    val isLoading by articleListViewModel.isLoading.collectAsState()
 
-    var category by remember {
-        mutableStateOf("")
-    }
+    if (isLoading) {
+        LoadingScreen()
 
-    val filteredArticles = if (category != "") {
-        articles.filter {
-            it.category == category
-        }
     } else {
-        articles
-    }
 
-    EniShopScaffold(
-        floatingActionButton = { ArticleListFAB(onNavigateToAddArticle = onNavigateToAddArticle) },
-        bottomBar = {
-            ArticleListBottomBar(
-                onClickToHome = {
-                    articleListViewModel.getArticles()
-                },
-                onClickToFav = {
-                    articleListViewModel.getArticlesFav()
-                }
-            )
+        var category by remember {
+            mutableStateOf("")
         }
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
+
+        val filteredArticles = if (category != "") {
+            articles.filter {
+                it.category == category
+            }
+        } else {
+            articles
+        }
+
+        EniShopScaffold(
+            floatingActionButton = { ArticleListFAB(onNavigateToAddArticle = onNavigateToAddArticle) },
+            bottomBar = {
+                ArticleListBottomBar(
+                    onClickToHome = {
+                        articleListViewModel.getArticles()
+                    },
+                    onClickToFav = {
+                        articleListViewModel.getArticlesFav()
+                    }
+                )
+            }
         ) {
-            CategoryFilterChip(
-                categories = categories,
-                selectedCategory = category,
-                onCategoryChange = { selectedCategory ->
-                    category = selectedCategory
-                }
-            )
-            ArticleList(
-                articles = filteredArticles,
-                onNavigateToArticleDetail = onNavigateToArticleDetail
-            )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+            ) {
+                CategoryFilterChip(
+                    categories = categories,
+                    selectedCategory = category,
+                    onCategoryChange = { selectedCategory ->
+                        category = selectedCategory
+                    }
+                )
+                ArticleList(
+                    articles = filteredArticles,
+                    onNavigateToArticleDetail = onNavigateToArticleDetail
+                )
+            }
         }
+
     }
-
-
 }
 
 @Composable
@@ -221,7 +228,8 @@ fun ArticleListFAB(onNavigateToAddArticle: () -> Unit) {
 @Composable
 fun ArticleListBottomBar(
     onClickToHome: () -> Unit,
-    onClickToFav: () -> Unit) {
+    onClickToFav: () -> Unit
+) {
 
     BottomAppBar() {
         Row(

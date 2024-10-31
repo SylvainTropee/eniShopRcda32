@@ -10,6 +10,7 @@ import com.example.eni_shop.dao.DaoFactory
 import com.example.eni_shop.dao.DaoType
 import com.example.eni_shop.db.EniShopDatabase
 import com.example.eni_shop.repository.ArticleRepository
+import com.example.eni_shop.services.ArticleService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +28,9 @@ class ArticleDetailViewModel(
     val isArticleFav = _isArticleFav.asStateFlow()
 
     fun getArticleById(id: Long) {
-        _currentArticle.value = articleRepository.getArticle(id)
+        viewModelScope.launch(Dispatchers.IO) {
+            _currentArticle.value = articleRepository.getArticle(id)
+        }
     }
 
     //récupération de l'article depuis la BDD
@@ -70,7 +73,7 @@ class ArticleDetailViewModel(
                 return ArticleDetailViewModel(
                     ArticleRepository(
                         EniShopDatabase.getInstance(application.applicationContext).getArticleDAO(),
-                        DaoFactory.createArticleDao(DaoType.MEMORY)
+                        ArticleService.ShopApi.retrofitService
                     )
                 ) as T
             }

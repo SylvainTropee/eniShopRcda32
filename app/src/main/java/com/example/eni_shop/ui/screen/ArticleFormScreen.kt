@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,33 +30,36 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.eni_shop.ui.common.EniShopScaffold
 import com.example.eni_shop.ui.common.EniShopTextField
 import com.example.eni_shop.ui.common.EniShopTopBar
+import com.example.eni_shop.vm.ArticleFormViewModel
 
 @Composable
 fun ArticleFormScreen(
-    navigationIcon : @Composable () -> Unit
+    navigationIcon: @Composable () -> Unit,
+    articleFormViewModel: ArticleFormViewModel = viewModel(factory = ArticleFormViewModel.Factory)
+
 ) {
 
     val context = LocalContext.current
+    val name by articleFormViewModel.name.collectAsState()
 
-    var title by rememberSaveable {
-        mutableStateOf("")
-    }
     EniShopScaffold(navigationIcon = navigationIcon) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally ,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .verticalScroll(
                     rememberScrollState()
                 )
         ) {
-            ArticleForm(title = title, onTitleChange = {
-                title = it
+            ArticleForm(title = name, onTitleChange = {
+                articleFormViewModel.setName(it)
             })
             Button(onClick = {
-                Toast.makeText(context, "$title ajouté", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "${name} ajouté", Toast.LENGTH_SHORT).show()
+                articleFormViewModel.addArticle()
             }) {
                 Text(text = "Enregistrer")
             }
