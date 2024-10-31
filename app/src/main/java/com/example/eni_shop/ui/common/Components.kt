@@ -1,6 +1,5 @@
 package com.example.eni_shop.ui.common
 
-import android.provider.ContactsContract.Data
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,18 +49,19 @@ import kotlinx.coroutines.launch
 fun EniShopScaffold(
     navigationIcon: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
 
     Scaffold(
         topBar = { EniShopTopBar(navigationIcon = navigationIcon) },
-        floatingActionButton = floatingActionButton
+        floatingActionButton = floatingActionButton,
+        bottomBar = bottomBar
     ) {
         Column(modifier = Modifier.padding(it)) {
             content()
         }
     }
-
 }
 
 
@@ -81,11 +81,11 @@ fun EniShopTopBar(
 @Composable
 fun SettingsMenu() {
 
-    var expanded by rememberSaveable{
+    var expanded by rememberSaveable {
         mutableStateOf(false)
     }
 
-    var isActivated by rememberSaveable{
+    var isActivated by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -93,8 +93,8 @@ fun SettingsMenu() {
     val coroutine = rememberCoroutineScope()
 
 
-    LaunchedEffect(Unit){
-        DataStoreManager.isDarkModeActivated(context).collect{
+    LaunchedEffect(Unit) {
+        DataStoreManager.isDarkModeActivated(context).collect {
             isActivated = it
         }
     }
